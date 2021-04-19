@@ -139,6 +139,7 @@ return true;
 
 
 
+
 <!-- Header Start -->
 <header class="navigation">
 	<div class="container">
@@ -158,27 +159,45 @@ return true;
 							<a class="navbar-brand" href="index.php">
 								<img src="images/logo.png" alt="Logo">
 							</a>
-						</div>
+							</div>
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
-								<li><a href="dietition home.php">Home</a></li>
-								<li><a href="provide diet plan.php">Provide Diet Plan</a></li>
+								<li><a href="index.php">Home</a></li>
+								<li><a href="blog.php">Blog</a></li>
+								<li><a href="aboutus.php">About Us</a></li>
+								<li><a href="services.php">Services</a></li>
 								<?php 
 								if ( isset($_SESSION['name']) ) {
-								echo '
+								echo '<li><a href="solutions.php">Health Solutions</a></li>
 								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
 								<ul class="dropdown-menu">
-										
+										<li><a href="profile.php">Profile</a></li>
 										<li><a href="logout.php">LogOut</a></li>
 									</ul>
 								</li>'; 
-								
+								}
+								else {
+								echo '<li><a href="signin.php">Sign In/ Sign Up</a></li>';
 								} ?>
 								</ul>
 							</div><!-- /.navbar-collapse -->
 							</div><!-- /.container-fluid -->
 						</nav>
+						<?php
+						if ( isset($_SESSION['plan_id']) )
+						{
+						if ($_SESSION['plan_id']== 1) 
+						{echo "<p align='right'>BASIC PLAN";}
+						else if ($_SESSION['plan_id']== 2) 
+						{echo "<p align='right'>PREMIUM PLAN";}
+						else if ($_SESSION['plan_id']== 3) 
+						{echo "<p align='right'>ADVANCE PLAN";}
+						}
+						else
+						{
+						echo"";}
+						?>
 					</div>
 				</div>
 			</div>
@@ -248,7 +267,6 @@ return true;
                         </div>
                        	<br>
 						<br>
-						<p align='center'><a align='center' class='btn btn-small' href = 'provide diet plan.php?'>Back</a></p>
 						</div>
 					</div>
 			            </form>

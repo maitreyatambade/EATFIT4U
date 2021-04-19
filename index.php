@@ -1,95 +1,29 @@
-<?php
+<?php 
 require_once "pdo.php";
 session_start();
-//error_reporting(0);
-  if(isset($_POST['username']) && isset($_POST['password']))
-  {
-    // Getting username/ email and password
-    $username=$_POST['username'];
-    $password=$_POST['password'];
-    // Fetch data from database on the basis of username/email and password
-    $sql ="SELECT * FROM dietition WHERE username=:username AND password=:password";
+if ( isset($_SESSION['name']) )
+{
+$sql ="SELECT * FROM subscription WHERE user_id=:user_id AND CURDATE() between start_timestamp and end_timestamp";
     $query= $pdo -> prepare($sql);
-   // $query-> bindParam(':username', $username, PDO::PARAM_STR);
-    //$query-> bindParam(':usrpassword', $password, PDO::PARAM_STR);
     $query-> execute(array(  
-                          'username'     =>     $_POST["username"],  
-                          'password'     =>     $_POST["password"]  
+                          'user_id'     =>     $_SESSION['userid']
                      ) );
-   //$results=$query->fetchAll(PDO::FETCH_OBJ);
-  //$query-> execute();
-  $count = $query->rowCount();
+	 $count = $query->rowCount();
   while($row= $query->fetch())
   {
-	//while($row=$s->fetch()){ //for each result, do the following
-     $userId=$row['dietition_id'];
-     $name=$row['name'];
-     //$dbPassword=$row['password'];
-    // $salt=$row['salt'];
-
-    //do something with the variables
-}
-  
+	$subscription_id=$row['subscription id'];
+    $plan_id=$row['plan_id'];
+	$expiry_date=$row['end_timestamp'];
+     
+  }
   if($count > 0)
   {
-    $_SESSION['username']=$_POST['username'];
-	$_SESSION['userid']=$userId;//$result['user_id'];
-	$_SESSION['name']=$name;//result["name"];
-	header( 'Location: dietition home.php' ) ;
-    //echo "<script > document.location = 'home.php'; </script>";
-  } else{
-    $_SESSION['invaliddetails']='Invalid Details';
-	//header( 'Location: signin.php' ) ;
-  }
-}
-//$alt = 'XyZzy12*_';
-//$stored_hash = '1a52e17fa899cf40fb04cfc42e6352f1'; 
-
- // Pw is php123
-/*
-// Check to see if we have some POST data, if we do store it in SESSION
-if(isset($_POST["email"]) && isset($_POST["pass"]))
-{
-	$_SESSION["email"] = $_POST["email"];
-	$_SESSION["pass"] = $_POST["pass"];
-
-	header("Location: login.php");
-	return;
-}*/
-
-// Check to see if we have some new data in $_SESSION, if we do process it
-/*if (isset($_SESSION["email"]) && isset($_SESSION["pass"])) 
-{
-	$username = $_SESSION["email"];
-	$password = $_SESSION["pass"];
-
-	if(strlen($username) < 1 || strlen($password) < 1)
-		$_SESSION["error"] = "User name and password are required";
-	else
-	{
-		$check = hash("md5", $alt.$password);
-
-		if($check == $stored_hash)
-		{
-			// Redirect the browser to add.php
-			header("Location: index.php");
-			error_log("Login success " . $username);
-			return;
-		}
-		else
-		{
-			$_SESSION["error"] = "Incorrect password";
-			error_log("Login fail" . $username . "$check");
-		}
-
+    $_SESSION['subscription_id']=$subscription_id;
+	$_SESSION['plan_id']=$plan_id;
+	$_SESSION['expiry_date']=$expiry_date;
 	}
-
-	unset($_SESSION["email"]);
-	unset($_SESSION["pass"]);
 }
-*/
 ?>
-
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -101,27 +35,8 @@ if(isset($_POST["email"]) && isset($_POST["pass"]))
   <meta name="description" content="Aviato E-Commerce Template">
   
   <meta name="author" content="Themefisher.com">
-  <script type="text/javascript">  
-function formValidation(){  
-var username=document.signin.username.value;
-var password=document.signin.password.value;  
 
-if (username==null || username==""){  
-  alert("UserName can't be blank");  
-  return false;  
-}
-  else if (password==null || password==""){  
-  alert("Password can't be blank");  
-  return false;  
-}
-else{  
-return true;
-} 
- 
-}  
-</script>
-
-  <title>EatFit4U | Dietition Console</title>
+  <title>EatFit4U | YOUR PERSONAL DIET & FITNESS PLANNER</title>
 
   <!-- Mobile Specific Meta-->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -165,69 +80,82 @@ return true;
 							<a class="navbar-brand" href="index.php">
 								<img src="images/logo.png" alt="Logo">
 							</a>
-						</div>
-						</div><!-- /.container-fluid -->
+							</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="index.php">Home</a></li>
+								<li><a href="blog.php">Blog</a></li>
+								<li><a href="aboutus.php">About Us</a></li>
+								<li><a href="services.php">Services</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '<li><a href="solutions.php">Health Solutions</a></li>
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										<li><a href="profile.php">Profile</a></li>
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								}
+								else {
+								echo '<li><a href="signin.php">Sign In/ Sign Up</a></li>';
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
 						</nav>
+						<?php
+						if ( isset($_SESSION['plan_id']) )
+						{
+						if ($_SESSION['plan_id']== 1) 
+						{echo "<p align='right'>BASIC PLAN";}
+						else if ($_SESSION['plan_id']== 2) 
+						{echo "<p align='right'>PREMIUM PLAN";}
+						else if ($_SESSION['plan_id']== 3) 
+						{echo "<p align='right'>ADVANCE PLAN";}
+						}
+						else
+						{
+						echo"";}
+						?>
 					</div>
 				</div>
 			</div>
 			</header><!-- header close -->
 
-<section class="page-title bg-2">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="block">
-          <h1>Dietition LogIn</h1>
-		   </div>
-      </div>
-    </div>
-  </div>
+<!-- Slider Start -->
+<section class="slider">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="block">
+					<h1 class="animated fadeInUp">Your Personal Diet <br>  &#38; Fitness Planner</h1>
+					<p class="animated fadeInUp">EatFit4U creates personalized meal &#38; workout plans based on your </br> 
+					body type, food preferences, budget, and schedule. Reach your diet and nutritional goals with our highly experinced nutritioists, fitness experts,<br> 
+					weekly meal plans, workout schedules and more. Create your meal plan right here. 
+					</br>&#38; get the best possible solutions for your fitness goals.</p>
+					<a href="#" target="_blank" class="btn btn-main animated fadeInUp" >Let's Get Fit</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </section>
-<!-- Login form start -->
-<section class="contact-form">
-<br>
-		  <p>
-		  <?php 
-		   if ( isset($_SESSION['success']) ) {
-    echo '<<div class="alert alert-info alert-common alert-dismissible" role="alert">
-		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['success'].'</span> </div>';
-    unset($_SESSION['success']);} 
-	
-	
-	if ( isset($_SESSION['invaliddetails']) ) {
-    echo ' <div class="alert alert-info alert-common alert-dismissible" role="alert">
-		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['invaliddetails'].'</span> </div>';			            
-    unset($_SESSION['invaliddetails']);} 
-		
-	?>
-</p>
-    <div class="container">
-        <div class="row">
-            <form method ="post" id="contact-form" name="signin"  action="index.php" onSubmit="return formValidation() ;" >
-                <div>
-                    <div class="block">
-                        
-                        <div class="form-group">
-                            <input name="username" type="text" class="form-control" placeholder="Username">
-                        </div>
-                        <div class="form-group">
-                            <input name="password" type="password" class="form-control" placeholder="Password">
-                        </div> <br>
-						<button class="btn btn-small mt-20"type="submit" align="center">Log In</button>
-					</div>
-					</div>
-				     </form>
-			
-        </div>
-		<br>
+
 <!-- footer Start -->
 <footer class="footer">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+						<li><a href="#">About Us</a></li>
+						<li><a href="#">Contact us</a></li>
+						<li><a href="#">How it works</a></li>
+						<li><a href="#">Support</a></li>
+						<li><a href="#">Terms</a></li>
+					</ul>
+				</div>
 				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
 					<br>
 				</p>
@@ -235,6 +163,7 @@ return true;
 		</div>
 	</div>
 </footer>
+
     <!-- 
     Essential Scripts
     =====================================-->
@@ -273,3 +202,4 @@ return true;
 
   </body>
   </html>
+   

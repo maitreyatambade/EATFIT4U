@@ -1,5 +1,29 @@
-<?php 
+<?php
+require_once "pdo.php";
 session_start();
+
+	$user_id=$_SESSION['userid'];
+	$sql ="SELECT * FROM users_profile WHERE user_id=:user_id";
+    $stmt = $pdo->prepare($sql);
+	
+    $stmt->execute(array(':user_id'=>$_SESSION['userid']));
+	
+
+	while($row= $stmt->fetch())
+  {
+	 $_SESSION['age']=$row['age'];
+     $_SESSION['height']=$row['height'];
+	 $_SESSION['weight']=$row['weight'];
+	 $_SESSION['eating_habits']=$row['eating_habits'];
+	 $_SESSION['worktype']=$row['worktype'];
+	 $_SESSION['disease']=$row['disease'];
+	}
+    
+    //header( 'Location: profile.php' ) ;
+	//$_SESSION['profile_success'] = 'Profile Updated Successfully';
+    //return;
+	
+
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -12,6 +36,50 @@ session_start();
   <meta name="description" content="Aviato E-Commerce Template">
   
   <meta name="author" content="Themefisher.com">
+  <script type="text/javascript">  
+function formValidation(){  
+var age=document.profile.age.value;
+var height=document.profile.height.value;
+var weight=document.profile.weight.value;
+var eating_habits=document.profile.eating_habits.value;  
+var worktype=document.profile.worktype.value;
+//var disease=document.profile.disease.value;
+//var heightcode = document.getElementById("height").value.charCodeAt(0);
+//var weightcode = document.getElementById("weight").value.charCodeAt(0);
+if (age==null || age==""){  
+  alert("Age can't be blank");  
+  return false;  
+}
+else if (height==null || height==""){  
+  alert("Height can't be blank");  
+  return false;  
+}
+/*else if (heightcode > 31 && (heightcode < 48 || heightcode > 57)){  
+		        alert("Enter Height in Centimenters only");  
+  return false;  
+}*/
+else if (weight==null || weight==""){  
+  alert("Weight can't be blank");  
+  return false;  
+}
+/*else if (weightcode > 31 && (weightcode < 48 || weightcode > 57)){  
+	       alert("Enter Weight in Kilograms only");  
+  return false;  
+}*/
+else if (eating_habits==null || eating_habits==""){  
+  alert("Eating Habits can't be blank");  
+  return false;  
+} 
+  else if (worktype==null || worktype==""){  
+  alert("Activity level can't be blank");  
+  return false;  
+}  
+else{  
+return true;
+} 
+ 
+}  
+</script>  
 
   <title>EatFit4U | YOUR PERSONAL DIET & FITNESS PLANNER</title>
 
@@ -38,6 +106,7 @@ session_start();
 
 <body id="body">
 
+
 <!-- Header Start -->
 <header class="navigation">
 	<div class="container">
@@ -54,7 +123,7 @@ session_start();
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 							</button>
-							<a class="navbar-brand" href="index.html">
+							<a class="navbar-brand" href="index.php">
 								<img src="images/logo.png" alt="Logo">
 							</a>
 						</div>
@@ -62,36 +131,112 @@ session_start();
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav navbar-right">
 								<li><a href="index.php">Home</a></li>
-								<li><a href="service.php">Blog</a></li>
-								<li><a href="contact.php">About Us</a></li>
+								<li><a href="blog.php">Blog</a></li>
+								<li><a href="aboutus.php">About Us</a></li>
 								<li><a href="services.php">Services</a></li>
-								<li><a href="signin.php">Sign In/ Sign Up</a></li>
-							</ul>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '<li><a href="solutions.php">Health Solutions</a></li>
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										<li><a href="profile.php">Profile</a></li>
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								}
+								else {
+								echo '<li><a href="signin.php">Sign In/ Sign Up</a></li>';
+								} ?>
+								</ul>
 							</div><!-- /.navbar-collapse -->
 							</div><!-- /.container-fluid -->
 						</nav>
+						<?php
+						if ( isset($_SESSION['plan_id']) )
+						{
+						if ($_SESSION['plan_id']== 1) 
+						{echo "<p align='right'>BASIC PLAN";}
+						else if ($_SESSION['plan_id']== 2) 
+						{echo "<p align='right'>PREMIUM PLAN";}
+						else if ($_SESSION['plan_id']== 3) 
+						{echo "<p align='right'>ADVANCE PLAN";}
+						}
+						else
+						{
+						echo"";}
+						?>
 					</div>
 				</div>
 			</div>
 			</header><!-- header close -->
 
-<!-- Slider Start -->
-<section class="slider">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="block">
-					<h1 class="animated fadeInUp">Your Personal Diet <br>  &#38; Fitness Planner</h1>
-					<p class="animated fadeInUp">EatFit4U creates personalized meal &#38; workout plans based on your </br> 
-					body type, food preferences, budget, and schedule. Reach your diet and nutritional goals with our highly experinced nutritioists, fitness experts,<br> 
-					weekly meal plans, workout schedules and more. Create your meal plan right here. 
-					</br>&#38; get the best possible solutions for your fitness goals.</p>
-					<a href="#" target="_blank" class="btn btn-main animated fadeInUp" >Let's Get Fit</a>
-				</div>
-			</div>
-		</div>
-	</div>
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Profile</h1>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+<!-- Profile form start -->
+<section class="contact-form">
+<br>
+ <p>
+ <?php 
+		   if ( isset($_SESSION['profile_success']) ) {
+    echo '<<div class="alert alert-info alert-common alert-dismissible" role="alert">
+		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['profile_success'].'</span> </div>';
+    unset($_SESSION['profile_success']);} 	
+	?>		 
+</p>
+    <div class="container">
+        <div class="row">
+		<br> <br>
+            <form method ="get" id="contact-form" name="profile"  action="profile update.php" >
+                <div>
+                    <div class="block">
+						<div class="form-group"><b>Name</b>
+                            <input type="text" name="name" class="form-control" placeholder="<?php echo $_SESSION['name'];  ?>" readonly>
+							
+                        </div>
+						<div class="form-group"><b>Age</b>  
+                            <input type="text" name="age" class="form-control" placeholder="<?php $display = false; if( isset($_SESSION['age'])){$display = $_SESSION['age'];} else {$display= "";} echo $display; ?>"readonly>
+							
+                        </div>
+                        <div class="form-group"><b>Height</b>
+                            <input type="text" name="height" class="form-control" placeholder="<?php if ( isset($_SESSION['height'])){echo $_SESSION['height'];} else {echo "";}?>"readonly>
+							
+                        </div>
+                        <div class="form-group"><b>Weight</b>
+                            <input type="text" name="weight" class="form-control" placeholder="<?php if ( isset($_SESSION['weight'])){echo $_SESSION['weight'];} else {echo "";}?>"readonly>
+
+                        </div> 
+						<div class="form-group"><b>Eating Habits</b>
+                            <input type="text"name="eating_habits" class="form-control" placeholder="<?php if ( isset($_SESSION['eating_habits'])){echo $_SESSION['eating_habits'];} else {echo "";}?>"readonly>
+							
+                        </div>
+                        <div class="form-group"><b>Worktype</b>
+                            <input  type="text" name="worktype" class="form-control" placeholder="<?php if ( isset($_SESSION['worktype'])){echo $_SESSION['worktype'];} else {echo "";}?>"readonly>
+							
+                        </div>
+						<div class="form-group"><b>Disease</b>
+                            <input type="text" name="disease" class="form-control" placeholder="<?php if ( isset($_SESSION['disease'])){echo $_SESSION['disease'];} else {echo "";}?>"readonly>
+							
+                        </div>
+                       	<br>
+						<br>
+						<button class="btn btn-small mt-20" type ="submit" align="center">Click Here to Update Profile</button>
+					</div>
+					</div>
+			            </form>
+        </div>
+		<br>
+		<br>
+</div>
 
 <!-- footer Start -->
 <footer class="footer">
@@ -114,7 +259,6 @@ session_start();
 		</div>
 	</div>
 </footer>
-
     <!-- 
     Essential Scripts
     =====================================-->
@@ -147,10 +291,5 @@ session_start();
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
 
     <script src="js/script.js"></script>
-    
-
-
-
   </body>
   </html>
-   

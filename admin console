@@ -1,0 +1,1806 @@
+<?php 
+session_start();
+?>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+
+  <title>EatFit4U | Admin Console</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="body">
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.php">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="admin home.php">Home</a></li>
+								<li><a href="reports.php">Reports</a></li>
+								<li><a href="add dietition.php">Add Dietition</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+
+<!-- Slider Start -->
+<section class="slider">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="block">
+					<h1 class="animated fadeInUp">Hello Admin <?php echo $_SESSION['name']; ?> <br>  &#38; Have a Great Day!</h1>
+					</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>    <!-- 
+</footer>    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+    
+
+
+
+  </body>
+  </html>
+   
+
+<?php
+require_once "pdo.php";
+session_start();
+//error_reporting(0);
+  if(isset($_POST['username']) && isset($_POST['password']))
+  {
+    // Getting username/ email and password
+    $username=$_POST['username'];
+    $password=$_POST['password'];
+    // Fetch data from database on the basis of username/email and password
+    $sql ="SELECT * FROM admin WHERE username=:username AND password=:password";
+    $query= $pdo -> prepare($sql);
+   // $query-> bindParam(':username', $username, PDO::PARAM_STR);
+    //$query-> bindParam(':usrpassword', $password, PDO::PARAM_STR);
+    $query-> execute(array(  
+                          'username'     =>     $_POST["username"],  
+                          'password'     =>     $_POST["password"]  
+                     ) );
+   //$results=$query->fetchAll(PDO::FETCH_OBJ);
+  //$query-> execute();
+  $count = $query->rowCount();
+  while($row= $query->fetch())
+  {
+	//while($row=$s->fetch()){ //for each result, do the following
+     $userId=$row['admin_id'];
+     $name=$row['name'];
+     //$dbPassword=$row['password'];
+    // $salt=$row['salt'];
+
+    //do something with the variables
+}
+  
+  if($count > 0)
+  {
+    $_SESSION['username']=$_POST['username'];
+	$_SESSION['userid']=$userId;//$result['user_id'];
+	$_SESSION['name']=$name;//result["name"];
+	header( 'Location: admin home.php' ) ;
+    //echo "<script > document.location = 'home.php'; </script>";
+  } else{
+    $_SESSION['invaliddetails']='Invalid Details';
+	//header( 'Location: signin.php' ) ;
+  }
+}
+//$alt = 'XyZzy12*_';
+//$stored_hash = '1a52e17fa899cf40fb04cfc42e6352f1'; 
+
+ // Pw is php123
+/*
+// Check to see if we have some POST data, if we do store it in SESSION
+if(isset($_POST["email"]) && isset($_POST["pass"]))
+{
+	$_SESSION["email"] = $_POST["email"];
+	$_SESSION["pass"] = $_POST["pass"];
+
+	header("Location: login.php");
+	return;
+}*/
+
+// Check to see if we have some new data in $_SESSION, if we do process it
+/*if (isset($_SESSION["email"]) && isset($_SESSION["pass"])) 
+{
+	$username = $_SESSION["email"];
+	$password = $_SESSION["pass"];
+
+	if(strlen($username) < 1 || strlen($password) < 1)
+		$_SESSION["error"] = "User name and password are required";
+	else
+	{
+		$check = hash("md5", $alt.$password);
+
+		if($check == $stored_hash)
+		{
+			// Redirect the browser to add.php
+			header("Location: index.php");
+			error_log("Login success " . $username);
+			return;
+		}
+		else
+		{
+			$_SESSION["error"] = "Incorrect password";
+			error_log("Login fail" . $username . "$check");
+		}
+
+	}
+
+	unset($_SESSION["email"]);
+	unset($_SESSION["pass"]);
+}
+*/
+?>
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+  <script type="text/javascript">  
+function formValidation(){  
+var username=document.signin.username.value;
+var password=document.signin.password.value;  
+
+if (username==null || username==""){  
+  alert("UserName can't be blank");  
+  return false;  
+}
+  else if (password==null || password==""){  
+  alert("Password can't be blank");  
+  return false;  
+}
+else{  
+return true;
+} 
+ 
+}  
+</script>
+
+  <title>EatFit4U | Admin Console</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="body">
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.php">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Admin LogIn</h1>
+		   </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Login form start -->
+<section class="contact-form">
+<br>
+		  <p>
+		  <?php 
+		   if ( isset($_SESSION['success']) ) {
+    echo '<<div class="alert alert-info alert-common alert-dismissible" role="alert">
+		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['success'].'</span> </div>';
+    unset($_SESSION['success']);} 
+	
+	
+	if ( isset($_SESSION['invaliddetails']) ) {
+    echo ' <div class="alert alert-info alert-common alert-dismissible" role="alert">
+		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['invaliddetails'].'</span> </div>';			            
+    unset($_SESSION['invaliddetails']);} 
+		
+	?>
+</p>
+    <div class="container">
+        <div class="row">
+            <form method ="post" id="contact-form" name="signin"  action="index.php" onSubmit="return formValidation() ;" >
+                <div>
+                    <div class="block">
+                        
+                        <div class="form-group">
+                            <input name="username" type="text" class="form-control" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <input name="password" type="password" class="form-control" placeholder="Password">
+                        </div> <br>
+						<button class="btn btn-small mt-20"type="submit" align="center">Log In</button>
+					</div>
+					</div>
+				     </form>
+			
+        </div>
+		<br>
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>
+    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+    
+
+
+
+  </body>
+  </html>
+
+
+<?php
+
+session_start();
+session_destroy();
+header("Location: index.php");
+
+?>
+<?php
+$pdo = new PDO('mysql:host=localhost;port=3306;dbname=eatfit4u_db', 'maitreya', 'password');
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+<?php 
+session_start();
+?>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+
+  <title>EatFit4U | YOUR PERSONAL DIET & FITNESS PLANNER</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="body">
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.html">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="index.php">Home</a></li>
+								<li><a href="service.php">Blog</a></li>
+								<li><a href="contact.php">About Us</a></li>
+								<li><a href="services.php">Services</a></li>
+								<li><a href="signin.php">Sign In/ Sign Up</a></li>
+							</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+
+<!-- Slider Start -->
+<section class="slider">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="block">
+					<h1 class="animated fadeInUp">Your Personal Diet <br>  &#38; Fitness Planner</h1>
+					<p class="animated fadeInUp">EatFit4U creates personalized meal &#38; workout plans based on your </br> 
+					body type, food preferences, budget, and schedule. Reach your diet and nutritional goals with our highly experinced nutritioists, fitness experts,<br> 
+					weekly meal plans, workout schedules and more. Create your meal plan right here. 
+					</br>&#38; get the best possible solutions for your fitness goals.</p>
+					<a href="#" target="_blank" class="btn btn-main animated fadeInUp" >Let's Get Fit</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="footer-manu">
+					<ul>
+						<li><a href="#">About Us</a></li>
+						<li><a href="#">Contact us</a></li>
+						<li><a href="#">How it works</a></li>
+						<li><a href="#">Support</a></li>
+						<li><a href="#">Terms</a></li>
+					</ul>
+				</div>
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+    
+
+
+
+  </body>
+  </html>
+   
+
+<?php
+require_once "pdo.php";
+session_start();
+/*if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+  if ( isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password'])  && isset($_POST['email']) && isset($_POST['qualification']))
+  {
+$sql = "INSERT INTO dietition (name, username, password, email, qualification) VALUES (:name, :username, :password, :email, :qualification)";
+    $stmt = $pdo->prepare($sql);
+	
+    $stmt->execute(array(
+        ':name' => $_POST['name'],
+		':username' => $_POST['username'],
+		':password' => $_POST['password'],
+        ':email' => $_POST['email'],
+        ':qualification' => $_POST['qualification']));
+    
+    header( 'Location: add dietition.php' ) ;
+	$_SESSION['new_dietititon'] = 'New Dietition Added';
+    return;
+	}
+}*/
+?>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+  <script type="text/javascript">  
+function formValidation(){  
+var name=document.signup.name.value;
+var username=document.signup.username.value;
+var email=document.signup.email.value;  
+var atposition=email.indexOf("@");  
+var dotposition=email.lastIndexOf(".");  
+var password=document.signup.password.value;  
+var qualification=document.signup.qualification.value; 
+
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}
+else if (username==null || username==""){  
+  alert("UserName can't be blank");  
+  return false;  
+}
+else if (password==null || password==""){  
+  alert("Password can't be blank");  
+  return false;  
+}
+else if (email==null || email==""){  
+  alert("Email can't be blank");  
+  return false;  
+} 
+else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+  alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+  return false;
+  }
+  else if (qualification==null || qualification==""){  
+  alert("Qualification can't be blank");  
+  return false;  
+}
+else{  
+return true;
+} 
+ 
+}  
+</script>  <style>
+.select-style {
+    border: 1px solid #ccc;
+    width: 120px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fafafa url("img/icon-select.png") no-repeat 90% 50%;
+}
+
+.select-style select {
+    padding: 5px 8px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+}
+ .zui-table {
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+}
+.zui-table thead th {
+    background-color: #DDEFEF;
+    border: solid 1px #DDEEEE;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+}
+.zui-table tbody td {
+    border: solid 1px #DDEEEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+}
+</style>
+
+  <title>EatFit4U | Admin Console</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="body">
+
+
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.php">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="admin home.php">Home</a></li>
+								<li><a href="reports.php">Reports</a></li>
+								<li><a href="add dietition.php">Add Dietition</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Details of Client</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- signup form start -->
+<section class="contact-form">
+<br><p align='center'> 
+<form method="GET" name="report_form" align='center'">
+<div class="form-group">
+  <?php
+				//index view 
+				if ( isset($_GET['user_id']))
+				{
+					$sql= "SELECT * FROM dietplan inner join users on users.user_id = dietplan.user_id WHERE dietplan.user_id=:user_id ORDER BY dietplan.start_date DESC";
+					$query = $pdo -> prepare($sql);
+					$query-> execute(array(  
+                          ':user_id'     =>     $_GET['user_id']) 
+                     );
+
+					if($query -> rowCount() > 0)
+					{
+						echo('<table border = "1" align="Center"  class="zui-table">' . "\n");
+
+						echo "<thead><tr><th>dietplan Id</th><th>Name</th><th>Plan Date</th><th>Plan Title</th><th>Action</th></tr></thead> <tbody>";
+
+						while($row = $query -> fetch(PDO::FETCH_ASSOC))
+						{
+							echo "<tr><td>";
+							echo(htmlentities($row["dietplan_id"]));
+							echo "</td><td>";
+							echo(htmlentities($row["name"]));
+							echo "</td><td>";
+							echo(htmlentities($row["start_date"]));
+							echo "</td><td>";
+							echo(htmlentities($row["title"]));
+							echo "</td><td>";
+							echo ('<a class="btn btn-small" href = "view details.php?plan_id='.$row["dietplan_id"].'">View Details</a>  ');
+	
+							echo "</td></tr>\n";
+						}
+
+						echo " <tbody></table>\n<br><br><p align='center'><a class='btn btn-small' href = 'reports.php?'>Back</a></p>";
+					}
+					else
+					{
+						echo "<p align='center'><B>No Records found</B></p><br><br>
+						<p align='center'><a align='center' class='btn btn-small' href = 'reports.php?'>Back</a></p>";
+					}
+
+				}	
+				
+			?>
+     </div>
+</form>
+  
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+  </body>
+  </html>
+<?php
+require_once "pdo.php";
+session_start();
+/*if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+  if ( isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password'])  && isset($_POST['email']) && isset($_POST['qualification']))
+  {
+$sql = "INSERT INTO dietition (name, username, password, email, qualification) VALUES (:name, :username, :password, :email, :qualification)";
+    $stmt = $pdo->prepare($sql);
+	
+    $stmt->execute(array(
+        ':name' => $_POST['name'],
+		':username' => $_POST['username'],
+		':password' => $_POST['password'],
+        ':email' => $_POST['email'],
+        ':qualification' => $_POST['qualification']));
+    
+    header( 'Location: add dietition.php' ) ;
+	$_SESSION['new_dietititon'] = 'New Dietition Added';
+    return;
+	}
+}*/
+?>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+  <script type="text/javascript">  
+function formValidation(){  
+var name=document.signup.name.value;
+var username=document.signup.username.value;
+var email=document.signup.email.value;  
+var atposition=email.indexOf("@");  
+var dotposition=email.lastIndexOf(".");  
+var password=document.signup.password.value;  
+var qualification=document.signup.qualification.value; 
+
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}
+else if (username==null || username==""){  
+  alert("UserName can't be blank");  
+  return false;  
+}
+else if (password==null || password==""){  
+  alert("Password can't be blank");  
+  return false;  
+}
+else if (email==null || email==""){  
+  alert("Email can't be blank");  
+  return false;  
+} 
+else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+  alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+  return false;
+  }
+  else if (qualification==null || qualification==""){  
+  alert("Qualification can't be blank");  
+  return false;  
+}
+else{  
+return true;
+} 
+ 
+}  
+</script>  <style>
+.select-style {
+    border: 1px solid #ccc;
+    width: 120px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fafafa url("img/icon-select.png") no-repeat 90% 50%;
+}
+
+.select-style select {
+    padding: 5px 8px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+}
+ .zui-table {
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+}
+.zui-table thead th {
+    background-color: #DDEFEF;
+    border: solid 1px #DDEEEE;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+}
+.zui-table tbody td {
+    border: solid 1px #DDEEEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+}
+</style>
+
+  <title>EatFit4U | Admin Console</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="body">
+
+
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.php">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="admin home.php">Home</a></li>
+								<li><a href="reports.php">Reports</a></li>
+								<li><a href="add dietition.php">Add Dietition</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>REPORTS</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- signup form start -->
+<section class="contact-form">
+<br><p align='center'> 
+<form method="GET" name="report_form" align='center'">
+<div class="form-group">
+  <?php
+  if (isset($_SESSION['name']))
+				{
+					$sql= "SELECT * FROM dietition";
+					$query = $pdo -> prepare($sql);
+					$query-> execute();
+					if($query -> rowCount() > 0)
+					{
+						echo('<label for="dietition">Choose a Dietition:</label>
+							<select class="select-style" id="dietition" name="dietition">');
+						while($row = $query -> fetch(PDO::FETCH_ASSOC))
+						{
+							echo "<option value=".$row["dietition_id"].">".$row["name"]."</option>";							
+						}
+					echo' </select><br><p align="center"><input type="submit">';
+	}
+					else
+					{
+						echo "<p align='center'><B>No Records found</B></p><br><br>
+						<p align='center'><a align='center' class='btn btn-small' href = 'index.php?'>Back</a></p>";
+					}
+
+				}	
+	?>
+ 
+   </div>
+  <div class="form-group">
+  <?php
+if ( isset($_GET['dietition']))
+{
+					$sql= "SELECT * FROM dietition Where dietition_id=:dietition_id ";
+					$query = $pdo -> prepare($sql);
+					$query-> execute(array(  
+                          ':dietition_id'     =>     $_GET['dietition']) 
+                     );
+					if($query -> rowCount() > 0)
+					{
+					while($row = $query -> fetch(PDO::FETCH_ASSOC))
+					{
+					echo "<h3><b>Patients of Dietition ".htmlentities($row["name"]). " are :</b></h3>";
+					}
+					}
+  }?>
+   <?php
+				//index view 
+				if ( isset($_GET['dietition']))
+				{
+					$sql= "SELECT * FROM subscription inner join users on users.user_id = subscription.user_id WHERE subscription.dietition_id=:dietition_id";
+					$query = $pdo -> prepare($sql);
+					$query-> execute(array(  
+                          ':dietition_id'     =>     $_GET['dietition']) 
+                     );
+
+					if($query -> rowCount() > 0)
+					{
+						echo('<table border = "1" align="Center"  class="zui-table">' . "\n");
+
+						echo "<thead><tr><th>User Id</th><th>Name</th><th>Action</th></tr></thead> <tbody>";
+
+						while($row = $query -> fetch(PDO::FETCH_ASSOC))
+						{
+							echo "<tr><td>";
+							echo(htmlentities($row["user_id"]));
+							echo "</td><td>";
+							echo(htmlentities($row["name"]));
+							echo "</td><td>";
+							echo ('<a class="btn btn-small" href = "report_details.php?user_id='.$row["user_id"].'">View Details</a>  ');
+	
+							echo "</td></tr>\n";
+						}
+
+						echo " <tbody></table>\n<br><br><p align='center'><a class='btn btn-small' href = '#'>Back</a></p>";
+					}
+					else
+					{
+						echo "<p align='center'><B>No Records found</B></p><br><br>
+						<p align='center'><a align='center' class='btn btn-small' href = '#'>Back</a></p>";
+					}
+
+				}	
+				
+			?>
+     </div>
+</form>
+  
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+  </body>
+  </html>
+<?php
+require_once "pdo.php";
+session_start();
+//$userid=$_GET['user_id'];
+if ( isset($_GET['plan_id']))
+{
+$stmt = $pdo->prepare("SELECT * FROM dietplan WHERE dietplan_id=:xyz ");
+$stmt->execute(array(":xyz" => $_GET["plan_id"]));
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$date = $row["start_date"];
+$name =$row["name"];
+$age = $row["age"];
+$height = $row["height"];
+$weight = $row["weight"];
+$eating_habits = $row["eating_habits"];
+$worktype = $row["work_type"];
+$disease = $row["disease"];
+$title = $row["title"];
+$plan = $row["plan"];
+}
+/*
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+  if ( isset($_POST['title']) && isset($_POST['plan']))
+  {
+	//$user_id=$_SESSION['userid'];
+	//$date = date('Y/m/d');
+  $sql = "INSERT INTO dietplan (start_date, dietition_id, user_id, name, age, height, weight, eating_habits, work_type, disease, title, plan)
+  VALUES (:date ,:dietition_id, :user_id, :name, :age, :height, :weight, :eating_habits, :worktype, :disease, :title, :plan)";
+    $stmt = $pdo->prepare($sql);
+	
+    $stmt -> execute( array ( ':date' => $_SESSION["date"],
+	':dietition_id' => $_SESSION["userid"],
+	':user_id' => $_SESSION["user_id"],
+	':name' => $_SESSION["name"],
+	':age' => $_SESSION["age"],
+	':height' => $_SESSION["height"],
+	':weight' => $_SESSION["weight"],
+	':eating_habits' => $_SESSION["eating_habits"], 
+	':worktype' => $_SESSION["worktype"],
+	':disease' => $_SESSION["disease"], 
+	':title' => $_POST["title"],
+	':plan' => $_POST["plan"]
+	)
+	);
+    header( 'Location: provide diet plan.php' ) ;
+	$_SESSION['profile_success'] = 'Plan Sent to User Successfully';
+unset($_SESSION["date"]);
+unset($_SESSION["user_id"]);
+unset($_SESSION["name"]);
+unset($_SESSION["age"]);
+unset($_SESSION["height"]);
+unset($_SESSION["weight"]);
+unset($_SESSION["eating_habits"]);
+unset($_SESSION["worktype"]);
+unset($_SESSION["disease"]);
+	return;
+	}
+}
+*/
+?>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+  <script type="text/javascript">  
+function formValidation(){  
+var title=document.profile.title.value;
+var plan=document.profile.plan.value;
+
+if (title==null || title==""){  
+  alert("Title can't be blank");  
+  return false;  
+}
+else if (plan==null || plan==""){  
+  alert("Plan can't be blank");  
+  return false;  
+}
+else{  
+return true;
+} 
+ 
+}  
+</script>  
+
+  <title>EatFit4U | Dietition Console</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+ .zui-table {
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+}
+.zui-table thead th {
+    background-color: #DDEFEF;
+    border: solid 1px #DDEEEE;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+}
+.zui-table tbody td {
+    border: solid 1px #DDEEEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+}
+</style>
+
+</head>
+
+<body id="body">
+
+
+
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.php">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="admin home.php">Home</a></li>
+								<li><a href="reports.php">Reports</a></li>
+								<li><a href="add dietition.php">Add Dietition</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>Diet Plan</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Profile form start -->
+<section class="contact-form">
+<br>
+		  <p>
+		
+</p>
+    <div class="container">
+        <div class="row">
+		<br> <br>
+            <form method ="post" id="contact-form" name="profile"  action="create diet plan.php" onSubmit="return formValidation();" >
+                <div>
+                    <div class="block">
+						<div class="form-group"><b>Date of Plan:</b>
+                            <input type="text" name="name" class="form-control" placeholder="<?php echo $date;  ?>" readonly>
+							
+                        </div>
+						<div class="form-group"><b>Name:</b>
+                            <input type="text" name="name" class="form-control" placeholder="<?php echo $name;  ?>" readonly>
+							
+                        </div>
+						<div class="form-group"><b>Age in Years:</b>
+                            <input type="text" name="age" class="form-control" placeholder="<?php echo $age;  ?>" readonly>
+							
+                        </div>
+                        <div class="form-group"><b>Height in Centimeters:</b>
+                            <input type="text" name="height" class="form-control" placeholder="<?php echo $height;  ?>" readonly>
+							
+                        </div>
+                        <div class="form-group"><b>Weight in Kilograms:</b>
+                            <input type="text" name="weight" class="form-control" placeholder="<?php echo $weight;  ?>" readonly>
+
+                        </div> 
+						<div class="form-group"><b>Food Preference:</b>
+                            <input type="text"name="eating_habits" class="form-control" placeholder="<?php echo $eating_habits;  ?>" readonly>
+							
+                        </div>
+                        <div class="form-group"><b>Work Level of Activity:</b>
+                            <input  type="text" name="worktype" class="form-control" placeholder="<?php echo $worktype;  ?>"readonly>
+							
+                        </div>
+						<div class="form-group"><b>Disease:</b>
+                            <input type="text" name="disease" class="form-control" placeholder="<?php echo $disease;  ?>"readonly>
+							
+                        </div>
+						<div class="form-group"><b>Plan Title:</b>
+                            <input type="text" name="title" class="form-control" placeholder="<?php echo $title;  ?>"readonly>
+							
+                        </div>
+						<div class="form-group"><b>Plan:</b><br>
+                            <?php echo $plan;  ?>
+							</textarea>
+                        </div>
+                       	<br>
+						<br>
+						<p align='center'><a align='center' class='btn btn-small' href = 'reports.php?'>Back</a></p>
+						</div>
+					</div>
+			            </form>
+        </div>
+		<br>
+		<br>
+</div>
+  
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+  </body>
+  </html>
+<?xml version="1.0"?>
+<configuration>
+  <system.web>
+    <compilation debug="true" targetFramework="4.0"/>
+  </system.web>
+</configuration>
+# Auto detect text files and perform LF normalization
+* text=auto
+
+<?php
+require_once "pdo.php";
+session_start();
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+  if ( isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password'])  && isset($_POST['email']) && isset($_POST['qualification']))
+  {
+     $sql ="SELECT * FROM dietition WHERE username=:username";
+    $query= $pdo -> prepare($sql);
+    $query-> execute(array(  
+                          'username'     =>     $_POST["username"],  
+                     ) );
+   $count = $query->rowCount();
+   if($count > 0)
+  {
+  	$_SESSION['new_dietititon'] = 'Dietition Already Exist Please add New Dietition';
+}
+else{
+$sql = "INSERT INTO dietition (name, username, password, email, qualification) VALUES (:name, :username, :password, :email, :qualification)";
+    $stmt = $pdo->prepare($sql);
+	
+    $stmt->execute(array(
+        ':name' => $_POST['name'],
+		':username' => $_POST['username'],
+		':password' => $_POST['password'],
+        ':email' => $_POST['email'],
+        ':qualification' => $_POST['qualification']));
+    
+    header( 'Location: add dietition.php' ) ;
+	$_SESSION['new_dietititon'] = 'New Dietition Added';
+    return;
+	}
+	}
+}
+?>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> 
+<html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Aviato E-Commerce Template">
+  
+  <meta name="author" content="Themefisher.com">
+  <script type="text/javascript">  
+function formValidation(){  
+var name=document.signup.name.value;
+var username=document.signup.username.value;
+var email=document.signup.email.value;  
+var atposition=email.indexOf("@");  
+var dotposition=email.lastIndexOf(".");  
+var password=document.signup.password.value;  
+var qualification=document.signup.qualification.value; 
+
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}
+else if (username==null || username==""){  
+  alert("UserName can't be blank");  
+  return false;  
+}
+else if (password==null || password==""){  
+  alert("Password can't be blank");  
+  return false;  
+}
+else if (email==null || email==""){  
+  alert("Email can't be blank");  
+  return false;  
+} 
+else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+  alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+  return false;
+  }
+  else if (qualification==null || qualification==""){  
+  alert("Qualification can't be blank");  
+  return false;  
+}
+else{  
+return true;
+} 
+ 
+}  
+</script>  
+
+  <title>EatFit4U | Admin Console</title>
+
+  <!-- Mobile Specific Meta-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png" />
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+  <!-- Ionic Icon Css -->
+  <link rel="stylesheet" href="plugins/Ionicons/css/ionicons.min.css">
+  <!-- animate.css -->
+  <link rel="stylesheet" href="plugins/animate-css/animate.css">
+  <!-- Magnify Popup -->
+  <link rel="stylesheet" href="plugins/magnific-popup/dist/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick-carousel/slick/slick-theme.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body id="body">
+
+
+
+<!-- Header Start -->
+<header class="navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- header Nav Start -->
+				<nav class="navbar">
+					<div class="container-fluid">
+						<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							</button>
+							<a class="navbar-brand" href="index.php">
+								<img src="images/logo.png" alt="Logo">
+							</a>
+						</div>
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="admin home.php">Home</a></li>
+								<li><a href="reports.php">Reports</a></li>
+								<li><a href="add dietition.php">Add Dietition</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
+						</nav>
+					</div>
+				</div>
+			</div>
+			</header><!-- header close -->
+<section class="page-title bg-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block">
+          <h1>ADD NEW DIETITION</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- signup form start -->
+<section class="contact-form">
+<br><p>
+  <?php 
+		   if ( isset($_SESSION['new_dietititon']) ) {
+    echo '<<div class="alert alert-info alert-common alert-dismissible" role="alert">
+		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['new_dietititon'].'</span> </div>';
+    unset($_SESSION['new_dietititon']);} 
+	
+	?>
+    <div class="container">
+        <div class="row">
+		<br> <br>
+            <form method ="post" id="contact-form" name="signup"  action="add dietition.php" onSubmit="return formValidation() ;" >
+                <div>
+                    <div class="block">
+						<div class="form-group">
+                            <input type="text" name="name" class="form-control" placeholder="Full Name">
+							
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="username" class="form-control" placeholder="Username">
+							
+                        </div>
+						<div class="form-group">
+                            <input name="password" type="password" class="form-control" placeholder="Password">
+                        </div> 
+						<div class="form-group">
+                            <input type="email" name="email" class="form-control" placeholder="Email Id">
+
+                        </div> 
+						 <div class="form-group">
+                            <input type="text" name="qualification" class="form-control" placeholder="Qualification">
+							
+                        </div>
+                        
+						
+                        <br>
+						<br>
+						<button class="btn btn-small mt-20"type="submit"align="center">Add</button>
+					</div>
+					</div>
+			 </form>
+        </div>
+		<br>
+		<br>
+</div>
+
+<!-- footer Start -->
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="copyright">Copyright 2020 &copy; Design & Developed by <a href="https:/www.linkedin.com/in/maitreya-tambade">Maitreya Tambade</a>. All rights reserved.
+					<br>
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>    <!-- 
+    Essential Scripts
+    =====================================-->
+    
+    <!-- <script src="js/jquery.counterup.js"></script> -->
+    
+    <!-- Main jQuery -->
+   
+    <script src="https://code.jquery.com/jquery-git.min.js"></script>
+    <!-- Bootstrap 3.1 -->
+    <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="plugins/slick-carousel/slick/slick.min.js"></script>
+    <!--  -->
+    <script src="plugins/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <!-- Mixit Up JS -->
+    <script src="plugins/mixitup/dist/mixitup.min.js"></script>
+    <!-- <script src="plugins/count-down/jquery.lwtCountdown-1.0.js"></script> -->
+    <script src="plugins/SyoTimer/build/jquery.syotimer.min.js"></script>
+
+
+    <!-- Form Validator -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>
+
+
+    
+    <!-- Google Map -->
+    <script src="plugins/google-map/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
+
+    <script src="js/script.js"></script>
+  </body>
+  </html>

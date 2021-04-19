@@ -2,23 +2,21 @@
 require_once "pdo.php";
 session_start();
 //$userid=$_GET['user_id'];
-if ( isset($_GET['plan_id']))
+if ( isset($_GET['user_id']))
 {
-$stmt = $pdo->prepare("SELECT * FROM dietplan WHERE dietplan_id=:xyz ");
-$stmt->execute(array(":xyz" => $_GET["plan_id"]));
+$stmt = $pdo->prepare("SELECT * FROM users inner join users_profile on users.user_id = users_profile.user_id WHERE users_profile.user_id=:xyz ");
+$stmt->execute(array(":xyz" => $_GET["user_id"]));
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-$date = $row["start_date"];
-$name =$row["name"];
-$age = $row["age"];
-$height = $row["height"];
-$weight = $row["weight"];
-$eating_habits = $row["eating_habits"];
-$worktype = $row["work_type"];
-$disease = $row["disease"];
-$title = $row["title"];
-$plan = $row["plan"];
-}
-/*
+$_SESSION["date"] = date('Y/m/d');
+$_SESSION["user_id"] = $row["user_id"];
+$_SESSION["name1"] =$row["name"];
+$_SESSION["age"] = $row["age"];
+$_SESSION["height"] = $row["height"];
+$_SESSION["weight"] = $row["weight"];
+$_SESSION["eating_habits"] = $row["eating_habits"];
+$_SESSION["worktype"] = $row["worktype"];
+$_SESSION["disease"] = $row["disease"];}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
   if ( isset($_POST['title']) && isset($_POST['plan']))
@@ -32,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $stmt -> execute( array ( ':date' => $_SESSION["date"],
 	':dietition_id' => $_SESSION["userid"],
 	':user_id' => $_SESSION["user_id"],
-	':name' => $_SESSION["name"],
+	':name' => $_SESSION["name1"],
 	':age' => $_SESSION["age"],
 	':height' => $_SESSION["height"],
 	':weight' => $_SESSION["weight"],
@@ -47,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	$_SESSION['profile_success'] = 'Plan Sent to User Successfully';
 unset($_SESSION["date"]);
 unset($_SESSION["user_id"]);
-unset($_SESSION["name"]);
+unset($_SESSION["name1"]);
 unset($_SESSION["age"]);
 unset($_SESSION["height"]);
 unset($_SESSION["weight"]);
@@ -57,7 +55,7 @@ unset($_SESSION["disease"]);
 	return;
 	}
 }
-*/
+
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -70,7 +68,10 @@ unset($_SESSION["disease"]);
   <meta name="description" content="Aviato E-Commerce Template">
   
   <meta name="author" content="Themefisher.com">
+  <script src="js/ckeditor/ckeditor.js" type="text/javascript"></script>
+
   <script type="text/javascript">  
+  
 function formValidation(){  
 var title=document.profile.title.value;
 var plan=document.profile.plan.value;
@@ -88,6 +89,7 @@ return true;
 } 
  
 }  
+
 </script>  
 
   <title>EatFit4U | Dietition Console</title>
@@ -188,7 +190,7 @@ return true;
     <div class="row">
       <div class="col-md-12">
         <div class="block">
-          <h1>Diet Plan</h1>
+          <h1>Create Diet Plan</h1>
         </div>
       </div>
     </div>
@@ -206,50 +208,47 @@ return true;
             <form method ="post" id="contact-form" name="profile"  action="create diet plan.php" onSubmit="return formValidation();" >
                 <div>
                     <div class="block">
-						<div class="form-group"><b>Date of Plan:</b>
-                            <input type="text" name="name" class="form-control" placeholder="<?php echo $date;  ?>" readonly>
-							
-                        </div>
 						<div class="form-group"><b>Name:</b>
-                            <input type="text" name="name" class="form-control" placeholder="<?php echo $name;  ?>" readonly>
+                            <input type="text" name="name" class="form-control" placeholder="<?php echo $_SESSION["name1"];  ?>" readonly>
 							
                         </div>
 						<div class="form-group"><b>Age in Years:</b>
-                            <input type="text" name="age" class="form-control" placeholder="<?php echo $age;  ?>" readonly>
+                            <input type="text" name="age" class="form-control" placeholder="<?php echo $_SESSION["age"];  ?>" readonly>
 							
                         </div>
                         <div class="form-group"><b>Height in Centimeters:</b>
-                            <input type="text" name="height" class="form-control" placeholder="<?php echo $height;  ?>" readonly>
+                            <input type="text" name="height" class="form-control" placeholder="<?php echo $_SESSION["height"];  ?>" readonly>
 							
                         </div>
                         <div class="form-group"><b>Weight in Kilograms:</b>
-                            <input type="text" name="weight" class="form-control" placeholder="<?php echo $weight;  ?>" readonly>
+                            <input type="text" name="weight" class="form-control" placeholder="<?php echo $_SESSION["weight"];  ?>" readonly>
 
                         </div> 
 						<div class="form-group"><b>Food Preference:</b>
-                            <input type="text"name="eating_habits" class="form-control" placeholder="<?php echo $eating_habits;  ?>" readonly>
+                            <input type="text"name="eating_habits" class="form-control" placeholder="<?php echo $_SESSION["eating_habits"];  ?>" readonly>
 							
                         </div>
                         <div class="form-group"><b>Work Level of Activity:</b>
-                            <input  type="text" name="worktype" class="form-control" placeholder="<?php echo $worktype;  ?>"readonly>
+                            <input  type="text" name="worktype" class="form-control" placeholder="<?php echo $_SESSION["worktype"];  ?>"readonly>
 							
                         </div>
 						<div class="form-group"><b>Disease:</b>
-                            <input type="text" name="disease" class="form-control" placeholder="<?php echo $disease;  ?>"readonly>
+                            <input type="text" name="disease" class="form-control" placeholder="<?php echo $_SESSION["disease"];  ?>"readonly>
 							
                         </div>
 						<div class="form-group"><b>Plan Title:</b>
-                            <input type="text" name="title" class="form-control" placeholder="<?php echo $title;  ?>"readonly>
+                            <input type="text" name="title" class="form-control" placeholder="Please Enter title for Plan">
 							
                         </div>
-						<div class="form-group"><b>Plan:</b><br>
-                            <?php echo $plan;  ?>
+						<div class="form-group"><b>Plan:</b>
+                            <textarea class="ckeditor" style="height:300px;" name="plan" class="form-control" placeholder="Please Enter Full Personalized Plan">
+							<script> CKEDITOR.replace( 'plan' );</script>
 							</textarea>
                         </div>
                        	<br>
 						<br>
-						<p align='center'><a align='center' class='btn btn-small' href = 'provide diet plan.php?'>Back</a></p>
-						</div>
+						<button class="btn btn-small mt-20"type="submit"align="center">Send Plan to User</button>
+					</div>
 					</div>
 			            </form>
         </div>

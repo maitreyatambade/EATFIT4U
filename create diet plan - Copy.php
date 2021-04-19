@@ -1,63 +1,50 @@
 <?php
 require_once "pdo.php";
 session_start();
-//$userid=$_GET['user_id'];
-if ( isset($_GET['plan_id']))
+$userid=$_GET['user_id'];
+if ( isset($_GET['user_id']))
 {
-$stmt = $pdo->prepare("SELECT * FROM dietplan WHERE dietplan_id=:xyz ");
-$stmt->execute(array(":xyz" => $_GET["plan_id"]));
+$stmt = $pdo->prepare("SELECT * FROM users inner join users_profile on users.user_id = users_profile.user_id WHERE users_profile.user_id=:xyz ");
+$stmt->execute(array(":xyz" => $_GET["user_id"]));
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-$date = $row["start_date"];
+
+/*if($row === false)
+{
+	$_SESSION["error"] = "Bad value for id";
+	header("Location: index.php");
+	return;
+}*/
+$date = date('Y/m/d');
+$user_id = $row["user_id"];
 $name =$row["name"];
 $age = $row["age"];
 $height = $row["height"];
 $weight = $row["weight"];
 $eating_habits = $row["eating_habits"];
-$worktype = $row["work_type"];
+$worktype = $row["worktype"];
 $disease = $row["disease"];
-$title = $row["title"];
-$plan = $row["plan"];
 }
-/*
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
   if ( isset($_POST['title']) && isset($_POST['plan']))
   {
 	//$user_id=$_SESSION['userid'];
-	//$date = date('Y/m/d');
-  $sql = "INSERT INTO dietplan (start_date, dietition_id, user_id, name, age, height, weight, eating_habits, work_type, disease, title, plan)
-  VALUES (:date ,:dietition_id, :user_id, :name, :age, :height, :weight, :eating_habits, :worktype, :disease, :title, :plan)";
+	$date = date('Y/m/d');
+  $sql = "INSERT INTO dietplan (date, dietition_id, user_id, name, age, height, weight, eating_habits, work_type, disease, title, plan)
+  VALUES (:date,:dietition_id,:user_id,:name,:age,:height,:weight,:eating_habits,:work_type,:disease,:title,:plan)";
     $stmt = $pdo->prepare($sql);
 	
-    $stmt -> execute( array ( ':date' => $_SESSION["date"],
-	':dietition_id' => $_SESSION["userid"],
-	':user_id' => $_SESSION["user_id"],
-	':name' => $_SESSION["name"],
-	':age' => $_SESSION["age"],
-	':height' => $_SESSION["height"],
-	':weight' => $_SESSION["weight"],
-	':eating_habits' => $_SESSION["eating_habits"], 
-	':worktype' => $_SESSION["worktype"],
-	':disease' => $_SESSION["disease"], 
-	':title' => $_POST["title"],
-	':plan' => $_POST["plan"]
-	)
-	);
+    $stmt->execute(array(':date' => $date,':dietition_id' => $_SESSION["userid"],':user_id' => $userid,':name' => $_POST["name"],
+	':age' => $_POST["age"],':height' => $_POST["height"],':weight' => $_POST["weight"],':eating_habits' => $_POST["eating_habits"], ':worktype' => $_POST["worktype"],
+	':disease' => $_POST["disease"], ':title' => $_POST["title"],':plan' => $_POST["plan"]));
+    
     header( 'Location: provide diet plan.php' ) ;
 	$_SESSION['profile_success'] = 'Plan Sent to User Successfully';
-unset($_SESSION["date"]);
-unset($_SESSION["user_id"]);
-unset($_SESSION["name"]);
-unset($_SESSION["age"]);
-unset($_SESSION["height"]);
-unset($_SESSION["weight"]);
-unset($_SESSION["eating_habits"]);
-unset($_SESSION["worktype"]);
-unset($_SESSION["disease"]);
-	return;
+	
+    return;
 	}
 }
-*/
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -188,7 +175,7 @@ return true;
     <div class="row">
       <div class="col-md-12">
         <div class="block">
-          <h1>Diet Plan</h1>
+          <h1>Create Diet Plan</h1>
         </div>
       </div>
     </div>
@@ -206,10 +193,6 @@ return true;
             <form method ="post" id="contact-form" name="profile"  action="create diet plan.php" onSubmit="return formValidation();" >
                 <div>
                     <div class="block">
-						<div class="form-group"><b>Date of Plan:</b>
-                            <input type="text" name="name" class="form-control" placeholder="<?php echo $date;  ?>" readonly>
-							
-                        </div>
 						<div class="form-group"><b>Name:</b>
                             <input type="text" name="name" class="form-control" placeholder="<?php echo $name;  ?>" readonly>
 							
@@ -239,17 +222,17 @@ return true;
 							
                         </div>
 						<div class="form-group"><b>Plan Title:</b>
-                            <input type="text" name="title" class="form-control" placeholder="<?php echo $title;  ?>"readonly>
+                            <input type="text" name="title" class="form-control" placeholder="Please Enter title for Plan">
 							
                         </div>
-						<div class="form-group"><b>Plan:</b><br>
-                            <?php echo $plan;  ?>
+						<div class="form-group"><b>Plan:</b>
+                            <textarea style="height:300px;" name="plan" class="form-control" placeholder="Please Enter Full Personalized Plan">
 							</textarea>
                         </div>
                        	<br>
 						<br>
-						<p align='center'><a align='center' class='btn btn-small' href = 'provide diet plan.php?'>Back</a></p>
-						</div>
+						<button class="btn btn-small mt-20"type="submit"align="center">Send Plan to User</button>
+					</div>
 					</div>
 			            </form>
         </div>

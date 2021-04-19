@@ -1,63 +1,25 @@
 <?php
 require_once "pdo.php";
 session_start();
-//$userid=$_GET['user_id'];
-if ( isset($_GET['plan_id']))
+/*if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
-$stmt = $pdo->prepare("SELECT * FROM dietplan WHERE dietplan_id=:xyz ");
-$stmt->execute(array(":xyz" => $_GET["plan_id"]));
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
-$date = $row["start_date"];
-$name =$row["name"];
-$age = $row["age"];
-$height = $row["height"];
-$weight = $row["weight"];
-$eating_habits = $row["eating_habits"];
-$worktype = $row["work_type"];
-$disease = $row["disease"];
-$title = $row["title"];
-$plan = $row["plan"];
-}
-/*
-if ($_SERVER["REQUEST_METHOD"] == "POST")
-{
-  if ( isset($_POST['title']) && isset($_POST['plan']))
+  if ( isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password'])  && isset($_POST['email']) && isset($_POST['qualification']))
   {
-	//$user_id=$_SESSION['userid'];
-	//$date = date('Y/m/d');
-  $sql = "INSERT INTO dietplan (start_date, dietition_id, user_id, name, age, height, weight, eating_habits, work_type, disease, title, plan)
-  VALUES (:date ,:dietition_id, :user_id, :name, :age, :height, :weight, :eating_habits, :worktype, :disease, :title, :plan)";
+$sql = "INSERT INTO dietition (name, username, password, email, qualification) VALUES (:name, :username, :password, :email, :qualification)";
     $stmt = $pdo->prepare($sql);
 	
-    $stmt -> execute( array ( ':date' => $_SESSION["date"],
-	':dietition_id' => $_SESSION["userid"],
-	':user_id' => $_SESSION["user_id"],
-	':name' => $_SESSION["name"],
-	':age' => $_SESSION["age"],
-	':height' => $_SESSION["height"],
-	':weight' => $_SESSION["weight"],
-	':eating_habits' => $_SESSION["eating_habits"], 
-	':worktype' => $_SESSION["worktype"],
-	':disease' => $_SESSION["disease"], 
-	':title' => $_POST["title"],
-	':plan' => $_POST["plan"]
-	)
-	);
-    header( 'Location: provide diet plan.php' ) ;
-	$_SESSION['profile_success'] = 'Plan Sent to User Successfully';
-unset($_SESSION["date"]);
-unset($_SESSION["user_id"]);
-unset($_SESSION["name"]);
-unset($_SESSION["age"]);
-unset($_SESSION["height"]);
-unset($_SESSION["weight"]);
-unset($_SESSION["eating_habits"]);
-unset($_SESSION["worktype"]);
-unset($_SESSION["disease"]);
-	return;
+    $stmt->execute(array(
+        ':name' => $_POST['name'],
+		':username' => $_POST['username'],
+		':password' => $_POST['password'],
+        ':email' => $_POST['email'],
+        ':qualification' => $_POST['qualification']));
+    
+    header( 'Location: add dietition.php' ) ;
+	$_SESSION['new_dietititon'] = 'New Dietition Added';
+    return;
 	}
-}
-*/
+}*/
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -72,15 +34,36 @@ unset($_SESSION["disease"]);
   <meta name="author" content="Themefisher.com">
   <script type="text/javascript">  
 function formValidation(){  
-var title=document.profile.title.value;
-var plan=document.profile.plan.value;
+var name=document.signup.name.value;
+var username=document.signup.username.value;
+var email=document.signup.email.value;  
+var atposition=email.indexOf("@");  
+var dotposition=email.lastIndexOf(".");  
+var password=document.signup.password.value;  
+var qualification=document.signup.qualification.value; 
 
-if (title==null || title==""){  
-  alert("Title can't be blank");  
+if (name==null || name==""){  
+  alert("Name can't be blank");  
   return false;  
 }
-else if (plan==null || plan==""){  
-  alert("Plan can't be blank");  
+else if (username==null || username==""){  
+  alert("UserName can't be blank");  
+  return false;  
+}
+else if (password==null || password==""){  
+  alert("Password can't be blank");  
+  return false;  
+}
+else if (email==null || email==""){  
+  alert("Email can't be blank");  
+  return false;  
+} 
+else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+  alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+  return false;
+  }
+  else if (qualification==null || qualification==""){  
+  alert("Qualification can't be blank");  
   return false;  
 }
 else{  
@@ -188,75 +171,60 @@ return true;
     <div class="row">
       <div class="col-md-12">
         <div class="block">
-          <h1>Diet Plan</h1>
+          <h1>Clients History</h1>
         </div>
       </div>
     </div>
   </div>
 </section>
-<!-- Profile form start -->
+<!-- signup form start -->
 <section class="contact-form">
-<br>
-		  <p>
-		
-</p>
-    <div class="container">
-        <div class="row">
-		<br> <br>
-            <form method ="post" id="contact-form" name="profile"  action="create diet plan.php" onSubmit="return formValidation();" >
-                <div>
-                    <div class="block">
-						<div class="form-group"><b>Date of Plan:</b>
-                            <input type="text" name="name" class="form-control" placeholder="<?php echo $date;  ?>" readonly>
-							
-                        </div>
-						<div class="form-group"><b>Name:</b>
-                            <input type="text" name="name" class="form-control" placeholder="<?php echo $name;  ?>" readonly>
-							
-                        </div>
-						<div class="form-group"><b>Age in Years:</b>
-                            <input type="text" name="age" class="form-control" placeholder="<?php echo $age;  ?>" readonly>
-							
-                        </div>
-                        <div class="form-group"><b>Height in Centimeters:</b>
-                            <input type="text" name="height" class="form-control" placeholder="<?php echo $height;  ?>" readonly>
-							
-                        </div>
-                        <div class="form-group"><b>Weight in Kilograms:</b>
-                            <input type="text" name="weight" class="form-control" placeholder="<?php echo $weight;  ?>" readonly>
+<br><p>
 
-                        </div> 
-						<div class="form-group"><b>Food Preference:</b>
-                            <input type="text"name="eating_habits" class="form-control" placeholder="<?php echo $eating_habits;  ?>" readonly>
-							
-                        </div>
-                        <div class="form-group"><b>Work Level of Activity:</b>
-                            <input  type="text" name="worktype" class="form-control" placeholder="<?php echo $worktype;  ?>"readonly>
-							
-                        </div>
-						<div class="form-group"><b>Disease:</b>
-                            <input type="text" name="disease" class="form-control" placeholder="<?php echo $disease;  ?>"readonly>
-							
-                        </div>
-						<div class="form-group"><b>Plan Title:</b>
-                            <input type="text" name="title" class="form-control" placeholder="<?php echo $title;  ?>"readonly>
-							
-                        </div>
-						<div class="form-group"><b>Plan:</b><br>
-                            <?php echo $plan;  ?>
-							</textarea>
-                        </div>
-                       	<br>
-						<br>
-						<p align='center'><a align='center' class='btn btn-small' href = 'provide diet plan.php?'>Back</a></p>
-						</div>
-					</div>
-			            </form>
-        </div>
-		<br>
-		<br>
-</div>
-  
+	<br><br>
+  <?php
+				//index view 
+				if ( isset($_GET['user_id']))
+				{
+					$sql= "SELECT * FROM dietplan inner join users on users.user_id = dietplan.user_id WHERE dietplan.user_id=:user_id ORDER BY dietplan.start_date DESC";
+					$query = $pdo -> prepare($sql);
+					$query-> execute(array(  
+                          ':user_id'     =>     $_GET['user_id']) 
+                     );
+
+					if($query -> rowCount() > 0)
+					{
+						echo('<table border = "1" align="Center"  class="zui-table">' . "\n");
+
+						echo "<thead><tr><th>dietplan Id</th><th>Name</th><th>Plan Date</th><th>Plan Title</th><th>Action</th></tr></thead> <tbody>";
+
+						while($row = $query -> fetch(PDO::FETCH_ASSOC))
+						{
+							echo "<tr><td>";
+							echo(htmlentities($row["dietplan_id"]));
+							echo "</td><td>";
+							echo(htmlentities($row["name"]));
+							echo "</td><td>";
+							echo(htmlentities($row["start_date"]));
+							echo "</td><td>";
+							echo(htmlentities($row["title"]));
+							echo "</td><td>";
+							echo ('<a class="btn btn-small" href = "view details.php?plan_id='.$row["dietplan_id"].'">View Details</a>  ');
+	
+							echo "</td></tr>\n";
+						}
+
+						echo " <tbody></table>\n<br><br><p align='center'><a class='btn btn-small' href = 'provide diet plan.php?'>Back</a></p>";
+					}
+					else
+					{
+						echo "<p align='center'><B>No Records found</B></p><br><br>
+						<p align='center'><a align='center' class='btn btn-small' href = 'provide diet plan.php?'>Back</a></p>";
+					}
+
+				}	
+				
+			?>
 <!-- footer Start -->
 <footer class="footer">
 	<div class="container">

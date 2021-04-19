@@ -1,95 +1,7 @@
 <?php
 require_once "pdo.php";
 session_start();
-//error_reporting(0);
-  if(isset($_POST['username']) && isset($_POST['password']))
-  {
-    // Getting username/ email and password
-    $username=$_POST['username'];
-    $password=$_POST['password'];
-    // Fetch data from database on the basis of username/email and password
-    $sql ="SELECT * FROM dietition WHERE username=:username AND password=:password";
-    $query= $pdo -> prepare($sql);
-   // $query-> bindParam(':username', $username, PDO::PARAM_STR);
-    //$query-> bindParam(':usrpassword', $password, PDO::PARAM_STR);
-    $query-> execute(array(  
-                          'username'     =>     $_POST["username"],  
-                          'password'     =>     $_POST["password"]  
-                     ) );
-   //$results=$query->fetchAll(PDO::FETCH_OBJ);
-  //$query-> execute();
-  $count = $query->rowCount();
-  while($row= $query->fetch())
-  {
-	//while($row=$s->fetch()){ //for each result, do the following
-     $userId=$row['dietition_id'];
-     $name=$row['name'];
-     //$dbPassword=$row['password'];
-    // $salt=$row['salt'];
-
-    //do something with the variables
-}
-  
-  if($count > 0)
-  {
-    $_SESSION['username']=$_POST['username'];
-	$_SESSION['userid']=$userId;//$result['user_id'];
-	$_SESSION['name']=$name;//result["name"];
-	header( 'Location: dietition home.php' ) ;
-    //echo "<script > document.location = 'home.php'; </script>";
-  } else{
-    $_SESSION['invaliddetails']='Invalid Details';
-	//header( 'Location: signin.php' ) ;
-  }
-}
-//$alt = 'XyZzy12*_';
-//$stored_hash = '1a52e17fa899cf40fb04cfc42e6352f1'; 
-
- // Pw is php123
-/*
-// Check to see if we have some POST data, if we do store it in SESSION
-if(isset($_POST["email"]) && isset($_POST["pass"]))
-{
-	$_SESSION["email"] = $_POST["email"];
-	$_SESSION["pass"] = $_POST["pass"];
-
-	header("Location: login.php");
-	return;
-}*/
-
-// Check to see if we have some new data in $_SESSION, if we do process it
-/*if (isset($_SESSION["email"]) && isset($_SESSION["pass"])) 
-{
-	$username = $_SESSION["email"];
-	$password = $_SESSION["pass"];
-
-	if(strlen($username) < 1 || strlen($password) < 1)
-		$_SESSION["error"] = "User name and password are required";
-	else
-	{
-		$check = hash("md5", $alt.$password);
-
-		if($check == $stored_hash)
-		{
-			// Redirect the browser to add.php
-			header("Location: index.php");
-			error_log("Login success " . $username);
-			return;
-		}
-		else
-		{
-			$_SESSION["error"] = "Incorrect password";
-			error_log("Login fail" . $username . "$check");
-		}
-
-	}
-
-	unset($_SESSION["email"]);
-	unset($_SESSION["pass"]);
-}
-*/
 ?>
-
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -103,15 +15,36 @@ if(isset($_POST["email"]) && isset($_POST["pass"]))
   <meta name="author" content="Themefisher.com">
   <script type="text/javascript">  
 function formValidation(){  
-var username=document.signin.username.value;
-var password=document.signin.password.value;  
+var name=document.signup.name.value;
+var username=document.signup.username.value;
+var email=document.signup.email.value;  
+var atposition=email.indexOf("@");  
+var dotposition=email.lastIndexOf(".");  
+var password=document.signup.password.value;  
+var qualification=document.signup.qualification.value; 
 
-if (username==null || username==""){  
+if (name==null || name==""){  
+  alert("Name can't be blank");  
+  return false;  
+}
+else if (username==null || username==""){  
   alert("UserName can't be blank");  
   return false;  
 }
-  else if (password==null || password==""){  
+else if (password==null || password==""){  
   alert("Password can't be blank");  
+  return false;  
+}
+else if (email==null || email==""){  
+  alert("Email can't be blank");  
+  return false;  
+} 
+else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+  alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+  return false;
+  }
+  else if (qualification==null || qualification==""){  
+  alert("Qualification can't be blank");  
   return false;  
 }
 else{  
@@ -119,7 +52,7 @@ return true;
 } 
  
 }  
-</script>
+</script>  
 
   <title>EatFit4U | Dietition Console</title>
 
@@ -141,10 +74,34 @@ return true;
   
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
+  <style>
+ .zui-table {
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+}
+.zui-table thead th {
+    background-color: #DDEFEF;
+    border: solid 1px #DDEEEE;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+}
+.zui-table tbody td {
+    border: solid 1px #DDEEEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+}
+</style>
 
 </head>
 
 <body id="body">
+
+
 
 <!-- Header Start -->
 <header class="navigation">
@@ -166,63 +123,101 @@ return true;
 								<img src="images/logo.png" alt="Logo">
 							</a>
 						</div>
-						</div><!-- /.container-fluid -->
+						<!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="dietition home.php">Home</a></li>
+								<li><a href="provide diet plan.php">Provide Diet Plan</a></li>
+								<?php 
+								if ( isset($_SESSION['name']) ) {
+								echo '
+								<li class="dropdown-slide"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">'.$_SESSION['name'].'<span class="ion-ios-arrow-down"></span></a>
+								<ul class="dropdown-menu">
+										
+										<li><a href="logout.php">LogOut</a></li>
+									</ul>
+								</li>'; 
+								
+								} ?>
+								</ul>
+							</div><!-- /.navbar-collapse -->
+							</div><!-- /.container-fluid -->
 						</nav>
 					</div>
 				</div>
 			</div>
 			</header><!-- header close -->
-
 <section class="page-title bg-2">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <div class="block">
-          <h1>Dietition LogIn</h1>
-		   </div>
+          <h1>Clients Allocated</h1>
+        </div>
       </div>
     </div>
   </div>
 </section>
-<!-- Login form start -->
+<!-- signup form start -->
 <section class="contact-form">
-<br>
-		  <p>
-		  <?php 
-		   if ( isset($_SESSION['success']) ) {
+<br><p>
+  <?php 
+		   if ( isset($_SESSION['profile_success']) ) {
     echo '<<div class="alert alert-info alert-common alert-dismissible" role="alert">
 		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['success'].'</span> </div>';
-    unset($_SESSION['success']);} 
-	
-	
-	if ( isset($_SESSION['invaliddetails']) ) {
-    echo ' <div class="alert alert-info alert-common alert-dismissible" role="alert">
-		            	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['invaliddetails'].'</span> </div>';			            
-    unset($_SESSION['invaliddetails']);} 
-		
+		            	<i class="tf-ion-android-checkbox-outline"></i><span><p align="center">'.$_SESSION['profile_success'].'</span> </div>';
+    unset($_SESSION['profile_success']);} 	
 	?>
-</p>
-    <div class="container">
-        <div class="row">
-            <form method ="post" id="contact-form" name="signin"  action="index.php" onSubmit="return formValidation() ;" >
-                <div>
-                    <div class="block">
-                        
-                        <div class="form-group">
-                            <input name="username" type="text" class="form-control" placeholder="Username">
-                        </div>
-                        <div class="form-group">
-                            <input name="password" type="password" class="form-control" placeholder="Password">
-                        </div> <br>
-						<button class="btn btn-small mt-20"type="submit" align="center">Log In</button>
-					</div>
-					</div>
-				     </form>
-			
-        </div>
-		<br>
+	<br><br>
+  <?php
+				//index view 
+				if(isset($_SESSION["userid"]))
+				{
+					$sql= "SELECT * FROM subscription inner join users on users.user_id = subscription.user_id WHERE subscription.dietition_id=:dietition_id ORDER BY subscription.start_timestamp DESC";
+					$query = $pdo -> prepare($sql);
+					$query-> execute(array(  
+                          'dietition_id'     =>     $_SESSION["userid"]) 
+                     );
+
+					if($query -> rowCount() > 0)
+					{
+						echo('<table border = "1" align="Center"  class="zui-table">' . "\n");
+
+						echo "<thead><tr><th>Subscription Id</th><th>Name</th><th>Subscription Start</th><th>Plan Name</th><th>History</th><th>Action</th></tr></thead> <tbody>";
+
+						while($row = $query -> fetch(PDO::FETCH_ASSOC))
+						{
+							echo "<tr><td>";
+							echo(htmlentities($row["subscription id"]));
+							echo "</td><td>";
+							echo(htmlentities($row["name"]));
+							echo "</td><td>";
+							echo(htmlentities($row["start_timestamp"]));
+							echo "</td><td>";
+							if($row["plan_id"]== 1)
+							{echo 'Basic';}
+							else if($row["plan_id"]== 2)
+							{echo 'Premium';}
+							else if($row["plan_id"]== 3)
+							{echo 'Advance';}
+							echo "</td><td>";
+							echo ('<a class="btn btn-small" href = "user history.php?user_id='.$row["user_id"].'">Check History</a>  ');
+							echo "</td><td>";
+							echo ('<a class="btn btn-small" href = "create diet plan.php?user_id='.$row["user_id"].'">Send Diet Plan</a>  ');
+	
+							echo "</td></tr>\n";
+						}
+
+						echo " <tbody></table>\n";
+					}
+					else
+					{
+						echo "<p>No rows found</p>";
+					}
+
+				}	
+				
+			?>
 <!-- footer Start -->
 <footer class="footer">
 	<div class="container">
@@ -234,8 +229,7 @@ return true;
 			</div>
 		</div>
 	</div>
-</footer>
-    <!-- 
+</footer>    <!-- 
     Essential Scripts
     =====================================-->
     
@@ -267,9 +261,5 @@ return true;
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkeLMlsiwzp6b3Gnaxd86lvakimwGA6UA&callback=initMap"></script>    
 
     <script src="js/script.js"></script>
-    
-
-
-
   </body>
   </html>
